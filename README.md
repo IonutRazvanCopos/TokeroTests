@@ -84,3 +84,7 @@ Test summary: total: 4, failed: 0, succeeded: 4, skipped: 0
 ## 🎥 Test Execution Videos
 
 https://www.loom.com/share/ab5188dabd9948b0b2bded6ecb40455b
+
+Just Firefox tests:
+
+https://www.loom.com/share/c93003a9f8eb4d0dbe7fe0b3765e33a2
