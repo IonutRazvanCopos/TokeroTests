@@ -30,8 +30,8 @@ public class PolicyTests
     }
 
     [TestCase("chromium")]
-    // [TestCase("firefox")]
-    // [TestCase("webkit")]
+    [TestCase("firefox")]
+    [TestCase("webkit")]
     public async Task TestPoliciesPageLoads(string browserName)
     {
         await LaunchBrowser(browserName);
