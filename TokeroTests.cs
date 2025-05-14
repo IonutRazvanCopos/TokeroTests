@@ -12,19 +12,29 @@ public class PolicyTests
     private IBrowser? _browser;
     private IBrowserContext? _context;
     private IPage? _page;
+    private IPlaywright? _playwright;
 
-    [SetUp]
-    public async Task Setup()
+    private async Task LaunchBrowser(string browserName)
     {
-        var playwright = await Playwright.CreateAsync();
-        _browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
+        _playwright = await Playwright.CreateAsync();
+
+        _browser = browserName switch
+        {
+            "firefox" => await _playwright.Firefox.LaunchAsync(new() { Headless = true }),
+            "webkit" => await _playwright.Webkit.LaunchAsync(new() { Headless = true }),
+            _ => await _playwright.Chromium.LaunchAsync(new() { Headless = true }),
+        };
+
         _context = await _browser.NewContextAsync();
         _page = await _context.NewPageAsync();
     }
 
-    [Test]
-    public async Task TestPoliciesPageLoads()
+    [TestCase("chromium")]
+    // [TestCase("firefox")]
+    // [TestCase("webkit")]
+    public async Task TestPoliciesPageLoads(string browserName)
     {
+        await LaunchBrowser(browserName);
         await _page!.GotoAsync("https://tokero.dev/en/");
         await _page.Locator("footer").ScrollIntoViewIfNeededAsync();
         await AcceptCookiesIfPresent();
@@ -33,21 +43,27 @@ public class PolicyTests
         Assert.IsTrue(links.Count > 0, "No links found on the policies page.");
     }
 
-[Test]
-public async Task TestContactPageLoads()
-{
-    await _page!.GotoAsync("https://tokero.dev/en/contact");
-    await AcceptCookiesIfPresent();
-
-    var contactTitle = _page.Locator("h1", new() { HasTextString = "Contact us" });
-    await contactTitle.WaitForAsync(new() { Timeout = 5000 });
-
-    Assert.IsTrue(await contactTitle.IsVisibleAsync(), "Contact page did not load properly.");
-}
-
-    [Test]
-    public async Task TestPoliciesInRomanian()
+    [TestCase("chromium")]
+    [TestCase("firefox")]
+    [TestCase("webkit")]
+    public async Task TestContactPageLoads(string browserName)
     {
+        await LaunchBrowser(browserName);
+        await _page!.GotoAsync("https://tokero.dev/en/contact");
+        await AcceptCookiesIfPresent();
+
+        var contactTitle = _page.Locator("h1", new() { HasTextString = "Contact us" });
+        await contactTitle.WaitForAsync(new() { Timeout = 5000 });
+
+        Assert.IsTrue(await contactTitle.IsVisibleAsync(), "Contact page did not load properly.");
+    }
+
+    [TestCase("chromium")]
+    [TestCase("firefox")]
+    [TestCase("webkit")]
+    public async Task TestPoliciesInRomanian(string browserName)
+    {
+        await LaunchBrowser(browserName);
         await _page!.GotoAsync("https://tokero.dev/ro/");
         await _page.Locator("footer").ScrollIntoViewIfNeededAsync();
         await AcceptCookiesIfPresent();
@@ -56,9 +72,12 @@ public async Task TestContactPageLoads()
         Assert.IsTrue(links.Count > 0, "No links found on Romanian policies page.");
     }
 
-    [Test]
-    public async Task TestPerformanceHomepage()
+    [TestCase("chromium")]
+    [TestCase("firefox")]
+    [TestCase("webkit")]
+    public async Task TestPerformanceHomepage(string browserName)
     {
+        await LaunchBrowser(browserName);
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         await _page!.GotoAsync("https://tokero.dev/en/");
         stopwatch.Stop();
@@ -68,7 +87,6 @@ public async Task TestContactPageLoads()
     private async Task AcceptCookiesIfPresent()
     {
         var cookieButton = _page!.Locator("button:has-text('Accept')");
-
         if (await cookieButton.IsVisibleAsync())
         {
             await cookieButton.ClickAsync();
@@ -80,8 +98,8 @@ public async Task TestContactPageLoads()
     {
         if (_context is not null)
             await _context.CloseAsync();
-
         if (_browser is not null)
             await _browser.CloseAsync();
+        _playwright?.Dispose();
     }
 }

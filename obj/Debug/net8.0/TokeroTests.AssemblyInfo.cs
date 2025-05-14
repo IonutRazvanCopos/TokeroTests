@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TokeroTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+47e84f37a7450dd9a47baffd16db77055fb0e220")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e634ee0f87ed0186f0261abf51a4fe1bf21fc15d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TokeroTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TokeroTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
